@@ -38,6 +38,11 @@ class App{
 		 this.settings = {
 			 "currentuser":{} 
 		 };
+
+		 this.state = {
+		 	"selected_product" : {},
+		 	"selected_index" : -1
+		 };
 	}
 	render(html, component){
 		component.innerHTML += html;
@@ -588,7 +593,7 @@ class Component extends App{
 					<b>Category:</b> ${this.customerlist[key].category}</br>
 					<b>Price:</b> ${this.customerlist[key].price}</br>
 					<b>Total:</B> ${this.customerlist[key].total}</br>
-					<b>Number of stocks available:</b> ${this.productlist[key].numberofstocks}</br>
+					<b>Number of stocks available:</b> ${this.productlist[this.state.selected_index].numberofstocks}</br>
 					<button class="btn btn danger" onclick="component.deleteitemcustomer(${key})">Delete</button>
 				`;
 			}
@@ -597,9 +602,26 @@ class Component extends App{
 	}
 	
 	deleteitemcustomer(key){
-		let product = {"productname":this.customerlist[key].productname,"category":this.customerlist[key].category,
-	    "numberofstocks":+this.customerlist[key].quantity+ +this.productlist[key].numberofstocks,"price":this.customerlist[key].price};
-		this.productlist[key] = product;
+
+		console.log("delete:"+key);
+		let delete_productname = this.customerlist[key].productname;
+		let delete_foundproduct = {};
+		let delete_foundIndex = -1;
+		for(let i=0;i<this.productlist.length;i++){
+			if(this.productlist[i].productname == delete_productname){
+				delete_foundproduct = this.productlist[i];
+				delete_foundIndex = i;
+			}
+		}
+
+		let product = {
+			"productname":delete_foundproduct.productname,
+			"category":delete_foundproduct.category,
+	    	"numberofstocks":parseInt(this.customerlist[key].quantity)+parseInt(delete_foundproduct.numberofstocks),
+	    	"price":delete_foundproduct.price
+	    };
+
+		this.productlist[delete_foundIndex] = product;
 		let table = document.getElementById('customerlistinginfo');
 		table.deleteRow(key);
 		this.customerlist.splice(key,1);
@@ -627,10 +649,13 @@ class Component extends App{
 	}
 	
 	quantityProducts(key){
-		console.log("key is " + key);
+		console.log("key:" + key);				
 		let html = "";
 		for(let index=0;index<this.productlist.length;index++){
 			if(index==key){
+				this.state.selected_product = this.productlist[index];
+				this.state.selected_index = index;
+				console.log(this.state.selected_product);				
 			    html += `
 				   </br>
 				   Quantity Item: <input type="text" id="quantityitemproducts">
@@ -642,15 +667,59 @@ class Component extends App{
 	}
 	
     createcustomerlist(key){
-		 var qip = document.getElementById('quantityitemproducts').value;
-         let customer = {"quantity":qip,"productname":this.productlist[key].productname,"category":this.productlist[key].category,
-		 "numberofstocks":this.productlist[key].numberofstocks-qip,"price":this.productlist[key].price,"total":qip*this.productlist[key].price};
-		 this.customerlist.push(customer);
-		 let customers = {"productname":this.productlist[key].productname,"category":this.productlist[key].category,
-		 "numberofstocks":this.productlist[key].numberofstocks-qip,"price":this.productlist[key].price};
-		 this.productlist[key] = customers;
+    	let selected_product = this.state.selected_product;
+    	let selected_index = this.state.selected_index;
+
+		 let qip = document.getElementById('quantityitemproducts').value;
+		 // console.log("qip:" + qip);
+         
+         let customer = {
+         	"quantity":qip,
+         	"productname":this.state.selected_product.productname,
+         	"category":this.state.selected_product.category,
+		 	"numberofstocks":this.state.selected_product.numberofstocks-qip,
+		 	"price":this.state.selected_product.price,
+		 	"total":qip*this.state.selected_product.price
+		 };
+		 
+		 let isExisting = false;
+		 let customer_foundIndex = -1;
+		 let newQty = -1;
+		 for(let i=0;i<this.customerlist.length;i++){
+		 	if(this.customerlist[i].productname==selected_product.productname){
+		 		isExisting = true;
+		 		customer_foundIndex = i;
+		 		console.log("found: " + this.customerlist[customer_foundIndex].quantity);
+		 		console.log("qip: " + qip);
+		 		newQty = parseInt(qip) + parseInt(this.customerlist[customer_foundIndex].quantity);
+		 		console.log("total: " + newQty);
+		 	}
+		 }
+		 if(isExisting==false){
+		 	this.customerlist.push(customer);
+		 }else{		 	
+		 	let updated_customerorder = {
+			 	"quantity":newQty,
+	         	"productname":this.state.selected_product.productname,
+	         	"category":this.state.selected_product.category,
+			 	"numberofstocks":this.state.selected_product.numberofstocks-qip,
+			 	"price":this.state.selected_product.price,
+			 	"total":newQty*this.state.selected_product.price
+		 	};
+		 	this.customerlist[customer_foundIndex] = updated_customerorder;		 	
+		 }
+		 
+		 let customers = {
+		 	"productname":this.state.selected_product.productname,
+		 	"category":this.state.selected_product.category,
+		 	"numberofstocks":this.state.selected_product.numberofstocks-qip,
+		 	"price":this.state.selected_product.price
+		 };
+
+		 this.productlist[selected_index] = customers;
 		 let details = document.getElementById('quantityProducts');
 		 details.innerHTML = "";
+		 
 		 this.customerlistinginfo();
 		 this.productsslistinginfo();
 	}
