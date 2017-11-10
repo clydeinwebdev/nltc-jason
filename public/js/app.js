@@ -232,6 +232,18 @@ class Component extends App{
 	}
 	
 	updatecategoryInfo(key){
+		let categorylist_selected = this.categorylist[key];
+		for(let i=0;i<this.productlist.length;i++){
+			if(i==key){				
+				this.productlist[i].category = $('#updatecategoryname').val();
+			}
+		}
+		for(let i=0;i<this.customerlist.length;i++){
+			if(i==key){				
+				this.customerlist[i].category = $('#updatecategoryname').val();
+			}
+		}
+
 		let ucn = document.getElementById('updatecategoryname');
 		let c = this.categorylist[key];
 		let category = {"categoryname":ucn.value};
@@ -242,6 +254,18 @@ class Component extends App{
 	}
 	
 	categoryinfoDelete(key){
+		let categorylist_selected = this.categorylist[key];
+		for(let i=0;i<this.productlist.length;i++){
+			if(this.productlist[i].category==categorylist_selected.categoryname){				
+				this.productlist.splice(i,1);
+			}
+		}
+		for(let i=0;i<this.customerlist.length;i++){
+			if(this.customerlist[i].category==categorylist_selected.categoryname){				
+				this.customerlist.splice(i,1);
+			}
+		}
+
 		let table = document.getElementById('categorylistinginfo');
 		table.deleteRow(key);
 		this.categorylist.splice(key,1);
