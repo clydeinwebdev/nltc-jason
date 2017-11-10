@@ -1,0 +1,422 @@
+"use strict";
+
+
+class App{
+	constructor(){
+		this.media = [
+			{
+				"img" : "https://images.freecreatives.com/wp-content/uploads/2016/03/Download-Sport-wallpaper.jpg",
+				"alignment" : "center-align",
+				"caption": "SPORTS WALLPAPER #1",
+				"slogan": "BY: John Jason H. Lam"
+			},
+			{
+				"img" : "http://hdwallpaperbackgrounds.net/wp-content/uploads/2016/09/Sports-Wallpaper-6.jpg",
+				"alignment" : "left-align",
+				"caption": "SPORTS WALLPAPER #2",
+				"slogan": "BY: John Jason H. Lam"
+			},
+			{
+				"img" : "http://hdwallpaperbackgrounds.net/wp-content/uploads/2016/09/Sports-Wallpaper-2.jpg",
+				"alignment" : "right-align",
+				"caption": "SPORTS WALLPAPER #3",
+				"slogan": "BY: John Jason H. Lam"
+			},
+			{
+				"img" : "http://eskipaper.com/images/free-sports-wallpaper-1.jpg",
+				"alignment" : "center-align",
+				"caption": "SPORTS WALLPAPER #4",
+				"slogan": "BY: John Jason H. Lam"
+			}
+		];
+		this.item = [
+		{
+        "name":"Basketball",
+        "desc":"Basketball is a game played between two teams of five players in which goals are scored by throwing a ball through a netted hoop fixed above each end of the court.",
+        "image":"img/basketball.jpg",
+        },
+        {
+        "name":"Volleyball",
+        "desc":"Volleyball is a game for two teams, usually of six players, in which a large ball is hit by land over a high net, the aim  being to score points by making the ball reach the ground on the opponent's side of the court.",
+        "image":"img/volleyball.jpg",
+        },
+        {
+        "name":"Badminton",
+        "desc":"A game with rackets in which a shuttlecock is played back and forth across the net.",
+        "image":"img/badminton.jpg",
+        }
+		];
+	}
+	render(html, component){
+
+		component.innerHTML += html;
+	}
+
+	reRender(html, component){
+
+		component.innerHTML = html;
+	}
+	readSports(){
+    let listSports = document.getElementById("sportInfo");
+    let html = ``;
+    for(let i=0;i<this.item.length;i++){
+      html += `<tr>
+          <td><img src="${this.item[i].image}"></td>
+          <td>${this.item[i].name}</td>
+          <td>${this.item[i].desc}</td>
+          <td><a class="waves-effect waves-light btn" onclick="component.sportDetailsPage(${i})">More Details</a></td> 
+        </tr>`;       
+    }
+    listSports.innerHTML = html;
+  }
+    searchSport(){
+    let txtSearchSport = document.getElementById("txtSearchSport");
+    let sportInfo = document.getElementById("sportInfo");
+  
+    let html = ``;
+    for(let i=0;i<this.item.length;i++){
+      if(this.item[i].name.toLowerCase().includes(txtSearchSport.value)||this.item[i].name.toUpperCase().includes(txtSearchSport.value)||this.item[i].name.includes(txtSearchSport.value)){
+        html += `
+        <tr>
+         <td><img src="${this.item[i].image}"></td>
+          <td>${this.item[i].name}</td>
+          <td>${this.item[i].desc}</td>
+          <td><a class="waves-effect waves-light btn" onclick="component.sportDetailsPage(${i})">More Details</a></td> 
+        </tr>`; 
+      }
+    }
+    sportInfo.innerHTML = html;
+  }
+  
+  
+  sportDetails(key){
+    let details = document.getElementById("sportdetails");
+    let html = ``;
+    for(let index=0;index<this.item.length;index++){
+      if(index==key){
+        html += `
+        <div id="sportdetailssection">
+          <div id="index-banner">
+                <div class="section">
+                  <div class="container">
+                    <br><br>
+                    <div class="row center">
+                      <h1 id="header">${this.item[index].name}</h1>
+                      <br><br>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="container">
+              <div class="row">
+                <div class="col s12 m12 l6" id="image-preview">
+                  <img src="${this.item[index].image}">
+                </div>
+                    <div class="section" >
+                      <div class="col s12 m12 l6" id="textBox">
+                            <p>${this.item[index].desc}</p>
+                            <a class="waves-effect waves-light btn" onclick="component.sportUpdateInput(${index})">Update</a>
+                            <a class="waves-effect waves-light btn" onclick="component.deleteSport(${index})">Delete</a>
+                            <a class="waves-effect waves-light btn" onclick="component.productsPage()">Back</a>
+                      </div>
+                    </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+      }
+    }
+    details.innerHTML = html;
+  }
+
+  sportUpdateInput(val){
+    let html = `
+      <div id="sportdetailssection">
+          <div id="index-banner">
+                <div class="section">
+                  <div class="container">
+                    <br><br>
+                    <div class="row center">
+                      <input id="updateName" type="text" value="${this.item[val].name}" />
+                      <br><br>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="container">
+              <div class="row">
+                <div class="col s12 m12 l6" id="image-preview">
+                  <img src="${this.item[val].image}">
+                </div>
+                    <div class="section" >
+                      <div class="col s12 m12 l6" id="textBox">
+                            <input id="updateDesc" type="text" value="${this.item[val].desc}" />
+                            <a class="waves-effect waves-light btn" onclick="component.updateSport(${val})">Done</a>
+                      </div>
+                    </div>
+              </div>
+            </div>
+          </div>
+      `;
+      this.reRender(`${html}`,document.getElementById('sportdetailssection'));
+  }
+  updateSport(key){
+    let n = document.getElementById('updateName');
+    let d = document.getElementById('updateDesc');
+
+    let i = this.item[key];
+    let item = {"name":n.value,"desc":d.value, "image":i.image, "link":i.link};
+
+    this.item[key] = item;
+    this.sportDetails(key);
+  }
+  deleteSport(key){   
+    let table = document.getElementById('sportInfo');
+    table.deleteRow(key);
+    this.item.splice(key,1);
+
+
+    this.productsPage(); 
+  }
+  createSport(){
+    let n = document.getElementById('createSport');
+    let d = document.getElementById('createDesc');
+    let i = document.getElementById('createImage');
+
+    let herb = {"name":n.value,"desc":d.value,"image":i.value};
+    this.item.push(herb);
+
+    n.value = d.value = i.value = ''; //Clear Fields
+    this.readSports();
+  }
+}
+class Component extends App{
+	constructor(){
+
+		super();
+	}
+
+	ukayLayout(){
+		let html = `
+			 <nav>
+			    <div class="nav-wrapper green">
+			      <a href="#" class="brand-logo yellow-text">LAM</a>
+			      <ul id="nav-mobile" class="right hide-on-med-and-down">
+			        <li><a href="#"><font color="yellow">Sports website</font></a></li>
+			      </ul>
+			    </div>
+			  </nav>
+
+
+			  <div class="slider">
+			    <ul class="slides">
+				
+			    `;
+
+			   for(let i=0;i<this.media.length;i++){
+					html += `
+					      <li>
+					        <img src="${this.media[i].img}"> <!-- random image -->
+					        <div class="caption ${this.media[i].alignment}">
+					          <h3>${this.media[i].caption}</h3>
+					          <h5 class="light grey-text text-lighten-3">${this.media[i].slogan}</h5>
+					        </div>
+					      </li>
+					    
+					 `;
+					}
+					
+					
+					 html += `
+
+					</ul>
+				  </div>
+				
+                 <h1>THE HISTORY OF SPORTS</h1>
+                 <p><strong>Sports</strong> have been the most popular form of recreation for people since time 
+                 immemorial. To jot down the conclusive history of sports in a short summary 
+                 is an impractical proposition. For gaining true insight, one needs to dig 
+                 historically to reach every nook, corner and township in different parts of 
+                 globe. The scope and vastness of sports and its history make it impossible to 
+                 point to a date that marks D-day in the world of sports.
+                 </br></br>
+                 The true spirit and recognition of sports at the international level took place
+                 with the introduction of olympic games in Greece. Ancient Olympics refer to a 
+                 legend called Hercules, son of Zeus, as being the founder of Olympic games. 
+                 Written records point to first Olympic games being held in 776BC. Historians
+                 believe that games were held much earlier than the recorded times. We have all
+                 heard about Coroebus who won the only sprint event held at the Olympics by running
+                 a distance of 192 meters.
+                 </br></br>
+                 Ancient Olympics had two major events - the Equestrian and the Pentathlon events and it 
+                 later added events like jumping, running, wrestling, javelin and discus (disc throwing).
+                 The Equestrian events introduced chariot racing and riding.
+                 </br></br>
+                 Olympic games were held every four years for around 1200 years. The Roman Emperor Theodosius 
+                 banned Olympic events in 393 CE owing to the game's pagan origin. Then during World War I and 
+                 II, Olympic games suffered its worst. Some 1500 years later, the Olympic games found revival
+                 with serious efforts by a Frenchman called Pierre de Coubertin. His efforts to rouse sports
+                 enthusiasm in France were initially met with scepticism and controversy. However, Coubertin was 
+                 not to give up his attempts so easily.
+                 </br></br>
+                 It was in 1890 that he established an organization called USFSA (Union des Sociétés Francaises de Sports
+                 Athlétiques). In an meeting of the USFSA in Paris on November 25,1892, Coubertin voiced his desire to 
+                 revive Olympic games with a popular speech. The speech did not invoke any serious interest. Two years
+                 later, in a meeting attended by 79 delegates from nine countries, he again proposed the idea and it 
+                 arose interest this time. The delegates at the conference unanimoisly voted for hosting Olympic games
+                 and Athens was chosen as the venue to restart the events.
+                 </br></br>
+                 Modern day Olympic games include sport events like,
+                 <ul type="square">
+                 <li>* Badminton, Baseball, Basketball, Beach Volleyball, Boxing</li>
+                 <li>* Archery</li>
+                 <li>* Canoeing & Cycling</li>
+                 <li>* Equestrian</li>
+                 <li>* Fencing, Field Hockey</li>
+                 <li>* Gymnastics, Judo, Modern Pent, Mountain Biking</li>
+                 <li>* Rhythmic Gym, Rowing</li>
+                 <li>* Sailing, Shooting, Soccer, Softball, Swimming, Swim</li>
+                 <li>* Table Tennis, Taekwondo, Team Handball, Tennis, Track $ Field, Trampoline, Triathlon</li>
+                 <li>* Water Polo, Weightlifting, and Wrestling</li>
+                 </ul>
+                 The International Federations are non-government organizations acclaimed by International Olympic Committee 
+                 for managing sports at the international level. These Federations are responsible for applying rules and ensuring 
+                 the integrity of Olympic sport.
+                 </br></br>
+                 A glance at major Olympic events since 1896,
+                 <table border="2" width="700">
+                 <tr><td><center><b>Year</b></center></td><td><center><b>Venue</b></center></td>
+                 <tr><td><center>1896</center></td><td><center>Athens</center></td></tr>
+                 <tr><td><center>1900</center></td>
+                 <td><center>Paris</center></td></tr>
+                 <tr><td><center>1904</center></td>
+                 <td><center>St.Louis</center></td></tr>
+                 <tr><td><center>1908</center></td>
+                 <td><center>London</center></td></tr>
+                 <tr><td><center>1912</center></td>
+                 <td><center>Stockholm</center></td></tr>
+                 <tr><td><center>1916</center></td>
+                 <td><center>Not held</center></td></tr>
+                 <tr><td><center>1920</center></td>
+                 <td><center>Antwerp</center></td></tr>
+                 <tr><td><center>1924</center></td>
+                 <td><center>Paris</center></td></tr>
+                 <tr><td><center>1928</center></td>
+                 <td><center>Amsterdam</center></td></tr>
+                 <tr><td><center>1932</center></td>
+                 <td><center>Los Angeles</center></td></tr>
+                 <tr><td><center>1936</center></td>
+                 <td><center>Berlin</center></td></tr>
+                 <tr><td><center>1940</center></td>
+                 <td><center>Not Held</center></td></tr>
+                 <tr><td><center>1944</center></td>
+                 <td><center>Not Held</center></td></tr>
+                 <tr><td><center>1948</center></td>
+                 <td><center>London</center></td></tr>
+                 <tr><td><center>1952</center></td>
+                 <td><center>Helsinki</center></td></tr>
+                 <tr><td><center>1956</center></td>
+                 <td><center>Melbourne</center></td></tr>
+                 <tr><td><center>1960</center></td>
+                 <td><center>Rome</center></td></tr>
+                 <tr><td><center>1968</center></td>
+                 <td><center>Mexico City</center></td></tr>
+                 <tr><td><center>1972</center></td>
+                 <td><center>Munich</center></td></tr>
+                 <tr><td><center>1976</center></td>
+                 <td><center>Montreal</center></td></tr>
+                 <tr><td><center>1980</center></td>
+                 <td><center>Moscow</center></td></tr>
+                 <tr><td><center>1984</center></td>
+                 <td><center>Los Angeles</center></td></tr>
+                 <tr><td><center>1988</center></td>
+                 <td><center>Seoul</center></td></tr>
+                 <tr><td><center>1992</center></td>
+                 <td><center>Barcelona</center></td></tr>
+                 <tr><td><center>1996</center></td>
+                 <td><center>Atlanta</center></td></tr>
+                 <tr><td><center>2000</center></td>
+                 <td><center>Sydney</center></td></tr>
+                 <tr><td><center>2004</center></td>
+                 <td><center>Athens</center></td>
+                 </table>
+                 <hr></hr>
+                 </body>
+                 </body>
+                 </html>	
+                
+
+      
+      <div id="products">
+      <div class="container">
+        <div class="row">
+          <div id="readpage" class="row marketing">
+              <div class="col s12 m12 l12">
+                <h1>Your Favorite Sports List</h1>
+                <table id="sportList" class="table striped">
+                  <thead>
+                    <tr>
+                      <th>Image</th>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search" id="txtSearchSport" oninput="component.searchSport()">
+                    </div>
+                  <tbody id="sportInfo"></tbody>
+                </table>
+				<h1>Create your Favorite Sports</h1>
+				<input id="createSport" type="text" placeholder="Name of the sport...">
+				<input id="createDesc" type="text" placeholder="Description of the sport...">
+				<input id="createImage" type="text" placeholder="URL Image of the sport...">
+				<a href="#!" class="waves-effect waves-light btn" onclick="component.createSport()">Enter</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+	
+	<div id="sportdetails">
+	</div>
+	
+				   <footer class="page-footer green darken-4">		          
+		          <div class="footer-copyright">
+		            © 2016 Copyright Text
+		            <a class="grey-text text-lighten-4 right" href="#!">LAM</a>
+		            </div>
+		          </div>
+		        </footer>	
+		`;
+		
+		this.reRender(`
+		   ${html}
+		   `,document.getElementById("app"));
+	}
+	
+	homePage(){
+    $('#homepage').show();
+    $('#products').hide();
+    $('#herbdetails').hide();
+  }
+  productsPage(){
+    $('#homepage').hide();
+    $('#products').show();
+    $('#herbdetails').hide();
+  }
+  herbDetailsPage(key){
+    $('#homepage').hide();
+    $('#products').hide();
+    $('#herbdetails').show();
+
+    component.herbDetails(key);
+
+}
+}
+
+let component = new Component();
+component.ukayLayout();
